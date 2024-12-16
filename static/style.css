@@ -1,0 +1,48 @@
+@import "/static/pygments.css";
+
+:root {
+    --brand-color: #4169e1;
+}
+
+body {
+    margin: 2rem auto;
+    max-width: 42rem;
+    line-height: 1.6;
+    font-family: "Arial", sans-serif;
+    font-size: 16px;
+    padding: 0 1rem;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+code {
+    font-size: 14px;
+    font-size: 0.875rem;
+    padding: 0.25rem;
+}
+
+pre code {
+    padding: 0;
+}
+
+pre {
+    padding: 1rem;
+    line-height: 1.25;
+    overflow: auto;
+}
+
+a {
+    color: var(--brand-color);
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+    max-height: 36rem;
+    max-width: 80%;
+}
+
+.footer {
+    text-align: center;
+}

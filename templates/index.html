@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>blog.snork.dev</h1>
+    <ul>
+    {% for post in posts %}
+        <li>
+            {{ post.published_at }}
+            <a href="/posts/{{ post.slug }}.html">{{ post.title }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
