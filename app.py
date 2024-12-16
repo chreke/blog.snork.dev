@@ -171,7 +171,7 @@ def view(slug, preview):
                 ExtractMeta(),
             ])
         content = md.convert(f.read())
-        metadata = getattr(md, "metadata")
+        metadata.update(getattr(md, "metadata", {}))
     return render_template(
         "post.html",
         description=metadata.get("description"),
