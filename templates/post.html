@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+    <h1>{{ title }}</h1>
     {% if preview %}
         <a href="/edit/{{ slug }}">Edit</a>
     {% endif %}
-    <h1>{{ title }}{{ " (preview)" if preview else "" }}</h1>
     {{ content|safe }}
 {% endblock %}
 {% block footer %}
