@@ -20,7 +20,7 @@ from werkzeug.security import safe_join
 
 app = Flask(__name__)
 
-SETTINGS_FILE = "settings.json"
+SETTINGS_FILE = "posts/settings.json"
 USERNAME = os.environ["AUTH_USER"]
 PASSWORD = os.environ["AUTH_PASSWORD"]
 
