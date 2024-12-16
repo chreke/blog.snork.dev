@@ -43,8 +43,6 @@ def require_authentication():
     )
     if not auth:
         abort(response)
-    print("auth", auth.username, auth.password)
-    print("auth", USERNAME, PASSWORD)
     if not (auth.username == USERNAME and auth.password == PASSWORD):
         abort(response)
 
