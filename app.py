@@ -168,12 +168,13 @@ def view(slug, preview):
                 "smarty",
                 "toc",
                 "footnotes",
-                # ExtractMeta(),
+                ExtractMeta(),
             ])
         content = md.convert(f.read())
-        # metadata = getattr(md, "metadata")
+        metadata = getattr(md, "metadata")
     return render_template(
         "post.html",
+        description=metadata.get("description"),
         slug=slug,
         content=content,
         preview=preview,
