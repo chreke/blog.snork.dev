@@ -32,7 +32,6 @@ def save_settings(settings):
 
 def read_posts():
     posts = [{"slug": k, **v} for k, v in load_settings()["posts"].items()]
-    print(posts)
     return sorted(
         posts,
         key=lambda x: x["published_at"],
