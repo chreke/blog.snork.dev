@@ -123,7 +123,7 @@ def edit_post(slug):
             slug = slug or slugify(title)
             now = datetime.datetime.now()
             metadata = {
-                "published_at": now.date().isoformat()
+                "published_at": now.isoformat()
             }
             settings["posts"][slug] = metadata
         content = request.form["content"]
