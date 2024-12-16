@@ -11,6 +11,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_from_directory,
 )
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
@@ -178,6 +179,10 @@ def view(slug, preview):
         preview=preview,
         title=metadata["title"]
     )
+
+@app.route("/media/<path:path>")
+def media(path):
+    return send_from_directory('media', path)
 
 # NOTE: Ensure that the "posts" dir exists on startup
 ensure_dir_exists(Path("posts"))
