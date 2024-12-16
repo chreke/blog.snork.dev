@@ -171,10 +171,10 @@ def view(slug, preview):
                 ExtractMeta(),
             ])
         content = md.convert(f.read())
-        metadata.update(getattr(md, "metadata", {}))
+        post_metadata = getattr(md, "metadata", {})
     return render_template(
         "post.html",
-        description=metadata.get("description"),
+        description=post_metadata["description"],
         slug=slug,
         content=content,
         preview=preview,
