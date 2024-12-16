@@ -2,10 +2,12 @@ import re
 import markdown
 import json
 import datetime
+import os
 
 from flask import (
     abort,
     Flask,
+    Response,
     redirect,
     render_template,
     request,
@@ -19,6 +21,8 @@ from werkzeug.security import safe_join
 app = Flask(__name__)
 
 SETTINGS_FILE = "settings.json"
+USERNAME = os.environ["AUTH_USER"]
+PASSWORD = os.environ["AUTH_PASSWORD"]
 
 def load_settings():
     if not Path(SETTINGS_FILE).exists():
@@ -29,6 +33,20 @@ def load_settings():
 def save_settings(settings):
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f, indent=4)
+
+def require_authentication():
+    auth = request.authorization
+    response = Response(
+        "You must log in to access this page",
+        401,
+        {"WWW-Authenticate": 'Basic realm="Login Required"'}
+    )
+    if not auth:
+        abort(response)
+    print("auth", auth.username, auth.password)
+    print("auth", USERNAME, PASSWORD)
+    if not (auth.username == USERNAME and auth.password == PASSWORD):
+        abort(response)
 
 def read_posts():
     posts = [{"slug": k, **v} for k, v in load_settings()["posts"].items()]
@@ -81,9 +99,9 @@ def index():
         title="blog.snork.dev"
     )
 
-# TODO: Protect this with basic auth
 @app.route("/edit/", methods=["GET"])
 def edit():
+    require_authentication()
     posts = read_posts()
     return render_template("edit.html", title="Edit posts", posts=posts)
 
@@ -93,6 +111,7 @@ def slugify(string):
 @app.route("/new/", methods=["GET", "POST"], defaults={"slug": ""})
 @app.route("/edit/<string:slug>", methods=["GET", "POST"])
 def edit_post(slug):
+    require_authentication()
     settings = load_settings()
     if request.method == "POST":
         title = request.form["title"]
@@ -133,6 +152,7 @@ def edit_post(slug):
 @app.route("/preview/<string:slug>.html", methods=["GET"], defaults={"preview": True})
 @app.route("/posts/<string:slug>.html", methods=["GET"], defaults={"preview": False})
 def view(slug, preview):
+    require_authentication()
     settings = load_settings()
     metadata = settings["posts"].get(slug)
     if not metadata:
