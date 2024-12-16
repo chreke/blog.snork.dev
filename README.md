@@ -1,5 +1,9 @@
 # blog.snork.dev
 
+This is a *very minimal* [Flask][flask] blog application, mostly intended for
+my personal use. However, I thought it might be fun to open source it, so here
+it is. Please excuse the somewhat janky code - pull requests are welcome!
+
 ## Installation
 
 To run this application you need [Python 3.8][python] or higher.
@@ -21,7 +25,8 @@ After the virtual environment has been created you need to activate it:
 venv\Scripts\Activate.ps1
 ```
 
-Clone this repository and install its dependencies with:
+After you've activated your virtual environment install the project
+dependencies with:
 
 ```sh
 pip install -r requirements.txt
@@ -67,5 +72,19 @@ gunicorn -b 0.0.0.0 app:app
 
 To create a new post, navigate to the `/edit` page
 
+## Development
+
+This project uses [pip-tools](https://github.com/jazzband/pip-tools) to manage
+development dependencies. If you want to work on the app, start by installing
+`pip-tools`:
+
+```sh
+pip install pip-tools
+```
+
+You should now be able to run `make` in the root directory to install and lock
+dependencies.
+
 [venv]: https://docs.python.org/3/library/venv.html
 [python]: https://www.python.org/
+[flask]: https://flask.palletsprojects.com/
