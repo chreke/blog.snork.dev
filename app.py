@@ -74,7 +74,7 @@ def ensure_dir_exists(path):
 
 @app.route("/", methods=["GET"])
 def index():
-    posts = read_posts()
+    posts = filter(lambda x: not x["draft"], read_posts())
     return render_template(
         "index.html",
         posts=posts,
