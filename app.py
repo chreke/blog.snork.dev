@@ -151,7 +151,6 @@ def edit_post(slug):
 @app.route("/preview/<string:slug>.html", methods=["GET"], defaults={"preview": True})
 @app.route("/posts/<string:slug>.html", methods=["GET"], defaults={"preview": False})
 def view(slug, preview):
-    require_authentication()
     settings = load_settings()
     metadata = settings["posts"].get(slug)
     if not metadata:
