@@ -2,7 +2,7 @@
 {% block content %}
     <h1>{{ title }}</h1>
     {% if preview %}
-        <a href="/edit/{{ slug }}">Edit</a>
+        <a href="/edit/{{ slug }}.html">Edit</a>
     {% endif %}
     {{ content|safe }}
 {% endblock %}
