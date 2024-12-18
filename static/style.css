@@ -15,12 +15,14 @@ body {
 }
 
 code {
+    background: #f8f8f8;
     font-size: 14px;
     font-size: 0.875rem;
     padding: 0.25rem;
 }
 
 pre code {
+    background: inherit;
     padding: 0;
 }
 
