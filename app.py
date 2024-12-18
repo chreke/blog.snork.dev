@@ -108,7 +108,7 @@ def slugify(string):
     return re.sub(r"[^\w]", "-", string.lower())
 
 @app.route("/new/", methods=["GET", "POST"], defaults={"slug": ""})
-@app.route("/edit/<string:slug>", methods=["GET", "POST"])
+@app.route("/edit/<string:slug>.html", methods=["GET", "POST"])
 def edit_post(slug):
     require_authentication()
     settings = load_settings()
