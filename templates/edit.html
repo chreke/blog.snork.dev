@@ -6,7 +6,7 @@
     {% for post in posts %}
         <li>
             {{ post.published_at[:10] }}
-            <a href="/edit/{{ post.slug }}">{{ post.title }}</a>
+            <a href="/edit/{{ post.slug }}.html">{{ post.title }}</a>
             {{ "(draft)" if post.draft else "" }}
         </li>
     {% endfor %}
