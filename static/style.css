@@ -14,11 +14,24 @@ body {
     hyphens: auto;
 }
 
+@media (prefers-color-scheme: dark) {
+  body {
+    background: rgb(27, 27, 27);
+    color: white;
+  }
+}
+
 code {
     background: #f8f8f8;
     font-size: 14px;
     font-size: 0.875rem;
     padding: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    code {
+        background: #343434
+    }
 }
 
 pre code {
