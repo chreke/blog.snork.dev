@@ -15,10 +15,10 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
-    background: rgb(27, 27, 27);
-    color: white;
-  }
+    body {
+        background: rgb(27, 27, 27);
+        color: white;
+    }
 }
 
 code {
@@ -47,6 +47,12 @@ pre {
 
 a {
     color: var(--brand-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #81a1c1;
+    }
 }
 
 img {
