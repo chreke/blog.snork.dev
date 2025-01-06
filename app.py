@@ -128,29 +128,26 @@ def edit_post(slug):
         content = request.form["content"]
         with open(f"posts/{slug}.md", "w") as f:
             f.write(content)
-        settings["posts"][slug]["title"] = title
-        settings["posts"][slug]["draft"] = draft
+        post = settings["posts"][slug]
+        post["title"] = title
+        post["draft"] = draft
         save_settings(settings)
         return redirect(f"/preview/{slug}.html")
     metadata = {
         "title": "",
-        "content": "",
         "draft": False,
     }
     content = ""
-    draft = False
     if slug:
         metadata = settings["posts"].get(slug)
         if not metadata:
             abort(404)
-        title = metadata["title"]
-        draft = metadata["draft"]
         file_path = safe_join(f"posts/{slug}.md")
         if not file_path:
             abort(404)
         with open(file_path, "r") as f:
             content = f.read()
-    return render_template("edit-post.html", title=title, content=content, draft=draft)
+    return render_template("edit-post.html", content=content, **metadata)
 
 @app.route("/preview/<string:slug>.html", methods=["GET"], defaults={"preview": True})
 @app.route("/posts/<string:slug>.html", methods=["GET"], defaults={"preview": False})
