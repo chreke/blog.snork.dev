@@ -113,7 +113,7 @@ def edit_post(slug):
     require_authentication()
     settings = load_settings()
     if request.method == "POST":
-        title = request.form["title"]
+        title = request.form["title"].strip()
         draft = bool(request.form.get("draft"))
         if not title:
             abort(400, "Title must be set")
@@ -132,7 +132,11 @@ def edit_post(slug):
         settings["posts"][slug]["draft"] = draft
         save_settings(settings)
         return redirect(f"/preview/{slug}.html")
-    title = ""
+    metadata = {
+        "title": "",
+        "content": "",
+        "draft": False,
+    }
     content = ""
     draft = False
     if slug:
