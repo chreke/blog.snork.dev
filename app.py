@@ -114,28 +114,28 @@ def edit_post(slug):
     settings = load_settings()
     if request.method == "POST":
         title = request.form["title"].strip()
+        # TODO: Add date validation
+        published_at = request.form["published_at"]
         draft = bool(request.form.get("draft"))
         if not title:
             abort(400, "Title must be set")
         # TODO: This could accidentally clobber other posts, fix this
         if not slug:
             slug = slug or slugify(title)
-            now = datetime.datetime.now()
-            metadata = {
-                "published_at": now.isoformat()
-            }
-            settings["posts"][slug] = metadata
+            settings["posts"][slug] = {}
         content = request.form["content"]
         with open(f"posts/{slug}.md", "w") as f:
             f.write(content)
         post = settings["posts"][slug]
         post["title"] = title
         post["draft"] = draft
+        post["published_at"] = published_at
         save_settings(settings)
         return redirect(f"/preview/{slug}.html")
     metadata = {
         "title": "",
         "draft": False,
+        "published_at": datetime.datetime.now().date().isoformat()
     }
     content = ""
     if slug:
