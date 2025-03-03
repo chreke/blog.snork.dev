@@ -188,7 +188,7 @@ def media(path):
 
 @app.route("/feed.xml", methods=["GET"])
 def feed():
-    posts = filter(lambda x: not x["draft"], read_posts())
+    posts = [p for p in read_posts() if not p["draft"]]
     feed_content = render_template("feed.xml", posts=posts)
     return Response(feed_content, mimetype="application/rss+xml")
 
