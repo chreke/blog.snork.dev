@@ -119,7 +119,6 @@ def edit_post(slug):
         draft = bool(request.form.get("draft"))
         if not title:
             abort(400, "Title must be set")
-        # TODO: This could accidentally clobber other posts, fix this
         if not slug:
             slug = slug or slugify(title)
             if slug in settings["posts"]:
@@ -186,6 +185,12 @@ def view(slug, preview):
 @app.route("/media/<path:path>")
 def media(path):
     return send_from_directory('media', path)
+
+@app.route("/feed.xml", methods=["GET"])
+def feed():
+    posts = filter(lambda x: not x["draft"], read_posts())
+    feed_content = render_template("feed.xml", posts=posts)
+    return Response(feed_content, mimetype="application/rss+xml")
 
 # NOTE: Ensure that the "posts" dir exists on startup
 ensure_dir_exists(Path("posts"))
