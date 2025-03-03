@@ -122,6 +122,8 @@ def edit_post(slug):
         # TODO: This could accidentally clobber other posts, fix this
         if not slug:
             slug = slug or slugify(title)
+            if slug in settings["posts"]:
+                abort(400, "Post with this slug already exists")
             settings["posts"][slug] = {}
         content = request.form["content"]
         with open(f"posts/{slug}.md", "w") as f:
