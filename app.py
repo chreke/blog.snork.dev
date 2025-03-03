@@ -20,6 +20,7 @@ from pathlib import Path
 from werkzeug.security import safe_join
 
 app = Flask(__name__)
+app.config["SERVER_NAME"] = "blog.snork.dev"
 
 SETTINGS_FILE = "posts/settings.json"
 USERNAME = os.environ["AUTH_USER"]
