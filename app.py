@@ -3,6 +3,7 @@ import markdown
 import json
 import datetime
 import os
+import secrets
 
 from flask import (
     abort,
@@ -12,6 +13,8 @@ from flask import (
     render_template,
     request,
     send_from_directory,
+    session,
+    url_for,
 )
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
@@ -21,6 +24,9 @@ from werkzeug.security import safe_join
 
 app = Flask(__name__)
 app.config["SERVER_NAME"] = "blog.snork.dev"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", secrets.token_hex(16))
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 SETTINGS_FILE = "posts/settings.json"
 USERNAME = os.environ["AUTH_USER"]
@@ -37,16 +43,28 @@ def save_settings(settings):
         json.dump(settings, f, indent=4)
 
 def require_authentication():
-    auth = request.authorization
-    response = Response(
-        "You must log in to access this page",
-        401,
-        {"WWW-Authenticate": 'Basic realm="Login Required"'}
-    )
-    if not auth:
-        abort(response)
-    if not (auth.username == USERNAME and auth.password == PASSWORD):
-        abort(response)
+    if not session.get("authenticated"):
+        return redirect(url_for("login", next=request.path))
+    return None
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        if (request.form["username"] == USERNAME and
+            request.form["password"] == PASSWORD):
+            session["authenticated"] = True
+            next_page = request.args.get("next", url_for("index"))
+            return redirect(next_page)
+        else:
+            error = "Invalid username or password"
+
+    return render_template("login.html", error=error, title="Login")
+
+@app.route("/logout")
+def logout():
+    session.pop("authenticated", None)
+    return redirect(url_for("index"))
 
 def read_posts():
     posts = [{"slug": k, **v} for k, v in load_settings()["posts"].items()]
@@ -101,7 +119,9 @@ def index():
 
 @app.route("/edit/", methods=["GET"])
 def edit():
-    require_authentication()
+    auth_result = require_authentication()
+    if auth_result is not None:
+        return auth_result
     posts = read_posts()
     return render_template("edit.html", title="Edit posts", posts=posts)
 
@@ -111,7 +131,9 @@ def slugify(string):
 @app.route("/new/", methods=["GET", "POST"], defaults={"slug": ""})
 @app.route("/edit/<string:slug>.html", methods=["GET", "POST"])
 def edit_post(slug):
-    require_authentication()
+    auth_result = require_authentication()
+    if auth_result is not None:
+        return auth_result
     settings = load_settings()
     if request.method == "POST":
         title = request.form["title"].strip()
@@ -133,7 +155,7 @@ def edit_post(slug):
         post["draft"] = draft
         post["published_at"] = published_at
         save_settings(settings)
-        return redirect(f"/preview/{slug}.html")
+        return redirect(f"/posts/{slug}.html")
     metadata = {
         "title": "",
         "draft": False,
@@ -151,9 +173,8 @@ def edit_post(slug):
             content = f.read()
     return render_template("edit-post.html", content=content, **metadata)
 
-@app.route("/preview/<string:slug>.html", methods=["GET"], defaults={"preview": True})
-@app.route("/posts/<string:slug>.html", methods=["GET"], defaults={"preview": False})
-def view(slug, preview):
+@app.route("/posts/<string:slug>.html", methods=["GET"])
+def view(slug):
     settings = load_settings()
     metadata = settings["posts"].get(slug)
     if not metadata:
@@ -174,12 +195,16 @@ def view(slug, preview):
             ])
         content = md.convert(f.read())
         post_metadata = getattr(md, "metadata", {})
+
+    # Show edit link for authenticated users
+    show_edit = session.get("authenticated", False)
+
     return render_template(
         "post.html",
         description=post_metadata["description"],
         slug=slug,
         content=content,
-        preview=preview,
+        show_edit=show_edit,
         title=metadata["title"]
     )
 

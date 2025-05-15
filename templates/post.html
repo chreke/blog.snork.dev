@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>{{ title }}</h1>
-    {% if preview %}
+    {% if show_edit %}
         <a href="/edit/{{ slug }}.html">Edit</a>
     {% endif %}
     {{ content|safe }}
