@@ -4,6 +4,7 @@ import json
 import datetime
 import os
 import secrets
+from functools import wraps
 
 from flask import (
     abort,
@@ -42,10 +43,13 @@ def save_settings(settings):
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f, indent=4)
 
-def require_authentication():
-    if not session.get("authenticated"):
-        return redirect(url_for("login", next=request.path))
-    return None
+def auth_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("authenticated"):
+            return redirect(url_for('login', next=request.path))
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -118,10 +122,8 @@ def index():
     )
 
 @app.route("/edit/", methods=["GET"])
+@auth_required
 def edit():
-    auth_result = require_authentication()
-    if auth_result is not None:
-        return auth_result
     posts = read_posts()
     return render_template("edit.html", title="Edit posts", posts=posts)
 
@@ -130,10 +132,8 @@ def slugify(string):
 
 @app.route("/new/", methods=["GET", "POST"], defaults={"slug": ""})
 @app.route("/edit/<string:slug>.html", methods=["GET", "POST"])
+@auth_required
 def edit_post(slug):
-    auth_result = require_authentication()
-    if auth_result is not None:
-        return auth_result
     settings = load_settings()
     if request.method == "POST":
         title = request.form["title"].strip()
